@@ -75,14 +75,13 @@ pipeline {
                 echo '### Creating a new app in DEV env ###'
                 script {
                     openshift.withCluster() {
-                      openshift.withProject(env.DEV_PROJECT) {
+                      openshift.withProject(${DEV_PROJECT}) {
                         openshift.selector("bc", "${APP_NAME}").startBuild("--from-file=${APP_NAME}/target/${APP_NAME}.jar", "--wait=true", "--follow=true")
                       }
                     }
                 }
-                // TODO: Create a new OpenShift application based on the ${APP_NAME}:latest image stream
                 sh '''
-                        oc project ${env.DEV_PROJECT}
+                        oc project ${DEV_PROJECT}
                         oc new-app --as-deployment-config --name=${APP_NAME} -i ${APP_NAME}:latest
                         oc expose svc/${APP_NAME}
                    '''
